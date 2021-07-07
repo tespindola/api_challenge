@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\productos\ProductosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function(){
+    // Productos
+    Route::get('productos', [ProductosController::class, 'index']);
+    Route::post('productos', [ProductosController::class, 'store']);
+    Route::post('productos/{id}', [ProductosController::class, 'update']);
+    Route::delete('productos/delete/{id}', [ProductosController::class, 'delete']);
+});
+
+Route::group(['prefix' => 'auth'], function(){
+
+    // Login de usuario
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+    Route::middleware('auth:api')->group(function() {
+        Route::post('logout', [AuthController::class, 'logout']);
+    });
 });

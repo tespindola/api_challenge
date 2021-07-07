@@ -19,7 +19,6 @@ class CreateProductosTable extends Migration{
             $table->float('precio_compra');
             $table->float('total_compra');
             $table->float('precio_venta');
-            $table->float('total_venta');
             $table->timestamps();
         });
     }

@@ -1,62 +1,63 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Requerimientos
+Composer
+PHP > 7.3
+Node (nvm) > 7.1.1
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Instalacion
+Tener instalado los paquetes de [composer](https://getcomposer.org/) y [npm](https://www.npmjs.com/) para poder ejecutar los siguientes comandos (instalan todas las dependencias del proyecto):
 
-## About Laravel
+```bash
+composer install && npm install
+```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Configuracion
+En las variables de entorno debe configurar los datos para la base de datos correctamente. (DB_DATABASE, DB_USERNAME, DB_PASSWORD)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Ejecutar los siguientes comandos:
+```bash
+php artisan migrate
+php artisan passport:install
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+# Rutas disponibles
+Todas las rutas tienen el prefijo /api/
 
-## Learning Laravel
+## Rutas para register y login
+```bash
+POST /auth/register (Registra un nuevo usuario)
+    - Parametros: name, email y password
+POST /auth/login (Inicia la sesion)
+    - Parametros: email y password
+    - La key access_token es el token que deben enviar para la verificacion de sesion en el sistema. Header Authorization Bearer <token>
+POST /auth/logout (Cierra la sesion)
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Rutas de productos
+```bash
+GET /productos (Obtiene los productos)
+    - Parametros: limit (opcional, elementos por pagina), order (opcional, columna para ordenar), order_type (opcional, desc o asc), q (opcional, busca coincidencias en nombre y descripcion)
+    - Return: Array de productos
+GET /productos/{id} (Obtiene producto por id)
+    - Parametros: id
+POST /productos (Crea un producto)
+    - Parametros: nombre, descripcion, precio_compra, precio_venta
+    - Return: El producto creado
+POST /productos/{id} (Edita un producto)
+    - Parametros: nombre, descripcion, precio_compra, precio_venta, id
+    - Return: El producto editado
+DELETE /productos/delete/{id} (Elimina un producto)
+    - Parametros: id,
+    - Return: delete = true
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Rutas de pokemons
+```bash
+GET /pokemons/save (Obtiene los pokemons de la api y los guarda en caso de que no exista)
+    - Return: message = 'Save success'
+GET /pokemons (Obtiene los pokemons)
+    - Parametros: limit (opcional, elementos por pagina)
+    - Return: Array de pokemons
+POST /pokemons (Crea un pokemon)
+    - Parametros: nombre, detalle_url
+    - Return: El pokemon creado
+```

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\productos\ProductosController;
+use App\Http\Controllers\pokemons\PokemonsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +20,15 @@ use App\Http\Controllers\productos\ProductosController;
 Route::middleware('auth:api')->group(function(){
     // Productos
     Route::get('productos', [ProductosController::class, 'index']);
+    Route::get('productos/{id}', [ProductosController::class, 'show']);
     Route::post('productos', [ProductosController::class, 'store']);
     Route::post('productos/{id}', [ProductosController::class, 'update']);
     Route::delete('productos/delete/{id}', [ProductosController::class, 'delete']);
+
+    // Pokemons
+    Route::get('pokemons/save', [PokemonsController::class, 'savePokemons']);
+    Route::get('pokemons', [PokemonsController::class, 'index']);
+    Route::post('pokemons', [PokemonsController::class, 'store']);
 });
 
 Route::group(['prefix' => 'auth'], function(){

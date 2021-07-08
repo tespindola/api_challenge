@@ -5,6 +5,8 @@ namespace App\Http\Controllers\productos;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\productos\ProductosModel;
+use Exception;
+use Validator;
 
 class ProductosController extends Controller{
     
@@ -13,9 +15,32 @@ class ProductosController extends Controller{
      * @return \Illuminate\Http\JsonResponse
      * @return $productos
      */
-    public function index(){
-        // Obtenemos todos los productos con una paginacion de 20 items por pagina
-        $productos = ProductosModel::paginate(20);
+    public function index(Request $request){
+        $rules = [
+            'limit' => 'numeric',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+
+        // Obtenemos todos los productos con una paginacion de 20 items por default y filtrando con q en caso de que venta en el request
+        $limit = 20;
+        if(isset($request['limit'])){
+            $limit = $request['limit'];
+        }
+        $productos = ProductosModel::query();
+        if(isset($request['order'])){
+            $order_type = 'desc';
+            if(isset($request['order_type'])){
+                $order_type = $request['order_type'];
+            }
+            $productos->orderBy($request['order'], $order_type);
+        }
+        if(isset($request['q'])){
+            $productos->where('nombre', 'LIKE', "%{$request['q']}%")->orWhere('descripcion', 'LIKE', "%{$request['q']}%");
+        }
+        $productos = $productos->paginate($limit);
 
         return response()->json([
             'productos' => $productos->items(),
@@ -23,6 +48,23 @@ class ProductosController extends Controller{
             'total' => $productos->total(),
             'per_page' => $productos->perPage(),
         ]);
+    }
+
+    /**
+     * Metodo para obtener un producto mediante su id
+     * @param Number $id
+     * @return \Illuminate\Http\JsonResponse
+     * @return $producto
+     */
+    public function show($id){
+        try {
+            $producto = ProductosModel::find($id);
+        } catch (Exception $err) {
+            // En caso de error abortamos y devolvemos el error
+            return response()->json($err, 500);
+        }
+
+        return response()->json(['producto' => $producto]);
     }
 
     /**
@@ -88,7 +130,7 @@ class ProductosController extends Controller{
         try {
             // Buscamos el producto y lo eliminamos
             ProductosModel::findOrFail($id)->delete();
-        } catch (\Throwable $th) {
+        } catch (Exception $err) {
             // En caso de error abortamos y devolvemos el error
             abort(response($err, 500));
         }
